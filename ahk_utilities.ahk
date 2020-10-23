@@ -26,11 +26,11 @@ NewTab(url, Rest:=1000, incognito:=false, Executable:="C:\Program Files (x86)\Go
   Send, ^0  ; if you've zoomed in previously, Chrome remembers and it will mess up the button click locations
 }
 
-Crest(x, y:=0, Rest:=1000, cm:="", right:=false){ ;{ Click + Rest = Crest. Move to (X,Y) or (x[1],x[2]) coordinates, pause 1 sec, click, rest. cm means CoordMode, and can only be Screen, Relative, Window, or Client - and it will switch back to Window at the end; right:=false - true for right-click.
+Crest(x, y:=0, Rest:=1000, cm:="", right:="false"){ ;{ Click + Rest = Crest. Move to (X,Y) or (x[1],x[2]) coordinates, pause 1 sec, click, rest. cm means CoordMode, and can only be Screen, Relative, Window, or Client - and it will switch back to Window at the end; right:=false - true for right-click.
   CoordMode, Mouse, Window
 
   ; You can change the coord mode. Possible Values are Screen, Relative and Client - Window is the default.
-  If(cm){
+  If(cm && cm != ""){
     AllowedValues := ["Screen", "Relative", "Client"]
     If (Includes(AllowedValues,cm))
       CoordMode, Mouse, %cm%
@@ -49,9 +49,7 @@ Crest(x, y:=0, Rest:=1000, cm:="", right:=false){ ;{ Click + Rest = Crest. Move 
   MouseMove, x, y, 5 ; 5 is how fast the mouse will move to that position, 0-100 (0 means instantly)
   Sleep, 1000
 
-  MsgBox, %right%
-  
-  If(right)
+  If(right = "RightClick")
     Click, right
   Else
     Click
@@ -146,6 +144,50 @@ WrongParameter(ParameterName, FunctionName, FileName, ValueSent, ArrayOfPossible
   Title := "Wrong Parameter: " . ParameterName . " " . FunctionName . " " . FileName
   Message := "You sent a value to " . FunctionName . " that didn't match any allowed values. The value sent was '" . ValueSent . "'. The allowed values are '" . Join(ArrayOfPossibleValues) . "'. See the file, " . FileName . ", for more info."
   ErrMsg(Title,Message)
+}
+
+; Rebuilds an ahk script automatically
+Rescript(script:="cmd"){
+  AllowedValues := []
+
+  AllowedValues.Push("atom")      ;  0 - atom
+  AllowedValues.Push("chrome")    ;  1 - chrome
+  AllowedValues.Push("cmd")       ;  2 - cmd
+  AllowedValues.Push(null)        ;  3 - null
+  AllowedValues.Push("exp")       ;  4 - exp
+  AllowedValues.Push("git")       ;  5 - git
+  AllowedValues.Push(null)        ;  6 - null
+  AllowedValues.Push(null)        ;  7 - null
+  AllowedValues.Push(null)        ;  8 - null
+  AllowedValues.Push("startup")   ;  9 - startup
+  AllowedValues.Push("switch")    ; 10 - switchToApps
+
+  If (script && Includes(AllowedValues,script))
+  {
+    ; Since the array is in order, the number of times to press down is the index of the array minus 1
+    for index, element in AllowedValues{
+      if(script = element)
+        DownTimes := index  ; The first file is .git so this will actually be 1-based
+    }
+    ; Wait for these keys to be releases
+    KeyWait Control
+    KeyWait Alt
+    KeyWait Shift
+
+    Seep("{F4}")  ; activate file explorer
+    Crest(47, 401)  ; click Startup from pinned folders
+    Seep("{Tab}")  ; move into the file pane
+    Send, {Down %DownTimes%}
+    Sleep, 1000
+    Seep("{Shift Down}{F10}{Shift Up}")  ; Richt-click with the keyboard
+    Seep("{Down 1}")  ; Select "Run Script"
+    Seep("{Enter}")
+
+
+  } Else { ; Handle incorrect params
+    WrongParameter("script", "Rescript", "ahk_utilities", script, AllowedValues)
+    return
+  }
 }
 
 ; Join an array together with s, the separator, ", " by default
