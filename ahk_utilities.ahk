@@ -176,7 +176,7 @@ Rescript(script:="cmd"){
 
     Seep("{F4}")    ; activate file explorer
     Crest(47, 401)  ; click Startup from pinned folders
-    Seep("{Tab}")   ; move into the file pane
+    Send, {Tab}   ; move into the file pane
     Send, {Down %DownTimes%}
     Sleep, 1000
     Seep("{Shift Down}{F10}{Shift Up}")  ; Richt-click with the keyboard
