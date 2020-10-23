@@ -174,9 +174,9 @@ Rescript(script:="cmd"){
     KeyWait Alt
     KeyWait Shift
 
-    Seep("{F4}")  ; activate file explorer
+    Seep("{F4}")    ; activate file explorer
     Crest(47, 401)  ; click Startup from pinned folders
-    Seep("{Tab}")  ; move into the file pane
+    Seep("{Tab}")   ; move into the file pane
     Send, {Down %DownTimes%}
     Sleep, 1000
     Seep("{Shift Down}{F10}{Shift Up}")  ; Richt-click with the keyboard
@@ -188,6 +188,8 @@ Rescript(script:="cmd"){
     WrongParameter("script", "Rescript", "ahk_utilities", script, AllowedValues)
     return
   }
+
+  Sleep, 1000
 }
 
 ; Join an array together with s, the separator, ", " by default
