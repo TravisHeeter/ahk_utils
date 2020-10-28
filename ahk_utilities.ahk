@@ -174,14 +174,14 @@ Rescript(script:="cmd"){
     KeyWait Alt
     KeyWait Shift
 
-    Seep("{F4}")    ; activate file explorer
-    Crest(47, 401)  ; click Startup from pinned folders
+    Seep("{F4}", 500)    ; activate file explorer
+    Crest(47, 401, 500)  ; click Startup from pinned folders
     Send, {Tab}   ; move into the file pane
     Send, {Down %DownTimes%}
-    Sleep, 1000
-    Seep("{Shift Down}{F10}{Shift Up}")  ; Richt-click with the keyboard
-    Seep("{Down 1}")  ; Select "Run Script"
-    Seep("{Enter}")
+    Sleep, 500
+    Seep("{Shift Down}{F10}{Shift Up}", 500)  ; Richt-click with the keyboard
+    Seep("{Down 1}", 500)  ; Select "Run Script"
+    Seep("{Enter}", 500)
 
 
   } Else { ; Handle incorrect params
