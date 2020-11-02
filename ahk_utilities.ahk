@@ -147,7 +147,7 @@ WrongParameter(ParameterName, FunctionName, FileName, ValueSent, ArrayOfPossible
 }
 
 ; Rebuilds an ahk script automatically
-Rescript(script:="cmd"){
+Rescript(script:="cmd", Screen:="Full"){
   AllowedValues := []
 
   AllowedValues.Push("atom")      ;  0 - atom
@@ -175,8 +175,14 @@ Rescript(script:="cmd"){
     KeyWait Shift
 
     Seep("{F4}", 500)    ; activate file explorer
-    Crest(47, 401, 500)  ; click Startup from pinned folders
-    Send, {Tab}   ; move into the file pane
+    If(Screen = "Full"){
+      Crest(47, 401, 500)  ; click Startup from pinned folders
+      Send, {Tab}   ; move into the file pane
+    } Else If(Screen = "Laptop"){
+      Seep("^l")  ; Highlight path location
+      Seep("C:\Users\theeter\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")
+      Seep("{Tab 3}")  ; Tab into the file pane
+    }
     Send, {Down %DownTimes%}
     Sleep, 500
     Seep("{Shift Down}{F10}{Shift Up}", 500)  ; Richt-click with the keyboard
