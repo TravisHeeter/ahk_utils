@@ -1,56 +1,24 @@
 ; Git Bash Utilities
 ; The git bash script was too big, so I moved all the functions here
 
-; Gets the current path from a file explorer window.
-GetCurrentPath()
-{
-  If !WinActive("ahk_class CabinetWClass"){
-    MsgBox, File Explorer is not active. Please open a file explorer window and navigate to a phoenix folder.
-    Reload ; Stops this script and reloads it, basically what break should do.
-  }
-  ; This is required to get the full path of the file from the address bar
-  WinGetText, full_path, A
+#Include %A_ScriptDir%/ahk_utilities.ahk
 
-  ; Split on newline (`n)
-  StringSplit, word_array, full_path, `n
+; Global Variables
+Global CheckBranchRepo := check_branch_repo
+Global Choice
+Global Choose
 
-  ; Find and take the element from the array that contains address
-  Loop, %word_array0%
-  {
-      IfInString, word_array%A_Index%, Address
-      {
-          full_path := word_array%A_Index%
-          break
-      }
-  }
-
-  ; strip to bare address
-  full_path := RegExReplace(full_path, "^Address: ", "")
-
-  ; Just in case - remove all carriage returns (`r)
-  StringReplace, full_path, full_path, `r, , all
-
-  return full_path
+ActivateGitBash(){
+  If !WinExist("ahk_exe mintty.exe")
+    OpenGbHere()
+  Else If WinActive("ahk_exe mintty.exe")
+    WinMinimize
+  Else
+    WinActivate, ahk_exe mintty.exe
 }
 
-; Opens the Git bash shell in the File Explorer path.
-OpenGbHere()
-{
-    full_path := GetCurrentPath()
-
-    IfInString full_path, \
-    {
-        Run,  C:\Program Files\Git\git-bash.exe, %full_path%
-    }
-    else
-    {
-        Run, C:\Program Files\Git\git-bash.exe --cd-to-home
-    }
-}
-
-Global CheckBranchRepo := "C:/repos/3/plain/phoenix"
-; Create a file dump of all branches
-CreateGitBranchFile(){
+; Create a file dump of all branches. To be used with Checkbranch.
+CB_CreateGitBranchFile(){
   ; Activate git bash
   Sleep, 500
   Seep("{LWin Down}{F2}{LWin Up}")
@@ -65,16 +33,151 @@ CreateGitBranchFile(){
   Seep("git branch -r > C:/Users/theeter/Desktop/branches.txt{Enter}", 2000)
 }
 
-; Read the file dump into a variable
-ReadGitBranchesFromFile(){
-  FileRead, vText, C:\Users\theeter\Desktop\branches.txt
-  Branches := StrSplit(vText,"`n","`r")
-
-  return Branches
+; Deletes any branches created from checkBranch
+CB_DeleteFeatures(){
+  Seep("{F4}")
+  Crest(47,422,500)
+  Seep("^l")
+  Seep("{Tab 3}")
+  Seep("^a")
+  Seep("+{Del}")
 }
 
-Global Choice
-Global Choose
+; Allow user to select which branch to run checkBranch on
+CB_SelectCheckBranch(){
+  FileRead, vText, C:\Users\theeter\Desktop\branches.txt
+  Branches := StrSplit(vText,"`n","`r")
+  Branch := ArrayToDropDown(Branches)
+}
+
+; Clone the repo.
+CloneRepo(){
+  if(!IsSet(repo_address)){
+    MsgBox, 16, git_bash_utils.ahk - CloneAndFlow, You need to create a Windows Environment Variable called "repo_address" and set it to the repo addres, ending in .git.
+    return
+  }
+  ; Close git bash if it's open
+  If WinExist("ahk_exe mintty.exe")
+    WinClose, "ahk_exe mintty.exe"
+  Sleep, 1000
+
+  ; Switch to File Exp so we can open GB to that location
+  WinActivate, ahk_class CabinetWClass
+  Sleep, 1000
+
+  ; Open GB to correct location
+  OpenGbHere()
+  Sleep, 2000
+
+  ; Activate the gb window to perform clone and flow commands
+  WinActivate, ahk_exe mintty.exe
+  Sleep, 1000
+
+  ; Maximize the window
+  WinMaximize, ahk_exe mintty.exe
+  Sleep, 1000
+
+  ; Clone Phoenix
+  Seep("git clone " . repo_address . "{Enter}",20000)
+}
+
+; Clone the repo and create the flow branch (current File Explorer Path)
+CloneAndFlow(){
+  CloneRepo()
+
+  ; Run flow stuff
+  Seep("c:/newFlowBranch.bat{Enter}", 20000)
+
+  ; Change dir so you can confirm the correctness of flow
+  Seep("cd phoenix/{Enter}")
+
+  ; Close All CMD windows
+  CloseAllCMDs()
+
+  ; re-run cmd_script.ahk
+  Rescript()
+
+  ; Rebuild with the new clone
+  Seep("!p")
+}
+
+; Clone the repo and checkout the branch (current File Explorer Path)
+CloneAndCheckout(){
+  p := StrReplace(GetCurrentPath(),repo_path)
+  CloneRepo()
+
+  Seep("cd phoenix/{Enter}")
+  Seep("git checkout feature/PHOEN-" . p . "{Enter}", 12000)
+  ChangeCRNT(repo_path . p . "\phoenix")
+}
+
+; Change the crnt env variable to the current file explorer path
+ChangeCRNT(p:=""){
+  If(!IsSet(p))
+    p := GetCurrentPath()
+  Sleep, 1000
+
+  CloseAllCMDs()
+
+  ; Open new cmd to C:\
+  Send, !c
+  Sleep, 1000
+
+  Seep("SET crnt=" . p . "{Enter}")
+  Seep("SETX crnt " . p . "{Enter}")
+
+  CloseAllCMDs()
+  Sleep, 1000
+  Rescript()
+
+  Seep("!p")
+}
+
+; Gets the current path from a file explorer window.
+GetCurrentPath(){
+  If !WinActive("ahk_class CabinetWClass"){
+    MsgBox, File Explorer is not active. Please open a file explorer window and navigate to a phoenix folder.
+    Reload ; Stops this script and reloads it, basically what break should do.
+  }
+  ; This is required to get the full path of the file from the address bar
+  WinGetText, full_path, A
+
+  ; Split on newline (`n)
+  StringSplit, word_array, full_path, `n
+
+  ; Find and take the element from the array that contains address
+  Loop, %word_array0%
+  {
+    IfInString, word_array%A_Index%, Address
+    {  ; Do not try to move this up, will cause obscure error: "Return's parameter should be left blank..."
+      full_path := word_array%A_Index%
+      break
+    }
+  }
+
+  ; strip to bare address
+  full_path := RegExReplace(full_path, "^Address: ", "")
+
+  ; Just in case - remove all carriage returns (`r)
+  StringReplace, full_path, full_path, `r, , all
+
+  return full_path
+}
+
+; Opens the Git bash shell in the File Explorer path.
+OpenGbHere(){
+    full_path := GetCurrentPath()
+
+    IfInString full_path, \
+    {
+        Run,  C:\Program Files\Git\git-bash.exe, %full_path%
+    }
+    else
+    {
+        Run, C:\Program Files\Git\git-bash.exe --cd-to-home
+    }
+}
+
 ; Load array into drop-down
 ArrayToDropDown(items){
   list=
@@ -90,9 +193,10 @@ ArrayToDropDown(items){
   Gui, Add, DropDownList, w500 vChoice, %list%
   Gui, Add, Button, vChoose, Choose
   Gui, Show,,Branches
-
 }
-return
+
+return ; Ends functions - do not erase
+
 ButtonChoose:
   Gui, Submit
   Gui, Destroy
