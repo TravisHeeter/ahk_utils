@@ -60,7 +60,7 @@ Rescript(script:="cmd", Screen:="Full"){
   AllowedValues.Push("git")       ;  5 - git
   AllowedValues.Push(null)        ;  6 - null
   AllowedValues.Push(null)        ;  7 - null
-  AllowedValues.Push(null)        ;  8 - null
+  AllowedValues.Push("misc")      ;  8 - misc
   AllowedValues.Push("startup")   ;  9 - startup
   AllowedValues.Push("switch")    ; 10 - switchToApps
 

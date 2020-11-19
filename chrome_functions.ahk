@@ -43,7 +43,7 @@ LaunchSite(User:="DMAnalyst",Screen:="Full"){
   } ;Else {
 
   ; Open a new incognito window to phoenix
-  Run, %chrome_exe% -incognito https://localhost:8081/phoenix/
+  Run, %ChromeEXE% -incognito https://localhost:8081/phoenix/
   Sleep, 2000
 
   SelectUser(User)
@@ -60,6 +60,7 @@ LaunchSite(User:="DMAnalyst",Screen:="Full"){
   Sleep, 3000
 
   LoginSequence(7000,Screen,false)
+  Tester()
 }
 
 LaunchTimesheet(){
@@ -256,19 +257,26 @@ ChromeStartup(){
 
 ; Tests comomn scenarios, built in to existing scripts.
 Tester(Screen:="Full"){
-  ; Go To First Case
-  if(Screen = "Full"){
-    ; Crest(449,230) ; Cases
-    Crest(525,225) ; RFIs
-    ; Crest(587,486) ; Click the Case
-    ; Crest(256,440) ; Click the RFI
-  } Else If(Screen = "Windowed"){
-    ;Crest(233,168)  ; Cases
-    ;Crest(367,406)  ; First Case
-  } Else If(Screen = "Quarter"){
 
-  } Else
-    Crest(400,228)
+  ; Create New Case, stop at Cac Options
+  Crest(2353,217)
+  Crest(2100,462)
+
+
+  ; ===========================================
+  ; Go To First Case
+  ;if(Screen = "Full"){
+    ;; Crest(449,230) ; Cases
+    ;Crest(525,225) ; RFIs
+    ;; Crest(587,486) ; Click the Case
+    ;; Crest(256,440) ; Click the RFI
+  ;} Else If(Screen = "Windowed"){
+    ;;Crest(233,168)  ; Cases
+    ;;Crest(367,406)  ; First Case
+  ;} Else If(Screen = "Quarter"){
+  ;} Else
+    ;Crest(400,228)
+  ; ==========================================
 
   ; Go to the workbook section
   ;Send, {WheelDown 10}
