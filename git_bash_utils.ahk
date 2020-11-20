@@ -1,7 +1,7 @@
 ; Git Bash Utilities
 ; The git bash script was too big, so I moved all the functions here
 
-#Include %A_ScriptDir%/ahk_utilities.ahk
+#Include C:\ahk_scripts\ahk_utils\ahk_functions.ahk
 
 ; Global Variables
 Global CheckBranchRepo := check_branch_repo
@@ -113,9 +113,13 @@ CloneAndCheckout(){
 
 ; Change the crnt env variable to the current file explorer path
 ChangeCRNT(p:=""){
-  If(!IsSet(p))
+  If(p = "")
     p := GetCurrentPath()
-  Sleep, 1000
+  Sleep, 2000
+  If(p = ""){
+    ErrMsg("git_bash_utils.ahk - GetCurrentPath()","An empty value was produced from GetCurrentPath during the ChangeCRNT procedure. The ChangeCRNT process will be stopped, although other sequences may still be running.")
+    return
+  }
 
   CloseAllCMDs()
 
@@ -137,7 +141,7 @@ ChangeCRNT(p:=""){
 GetCurrentPath(){
   If !WinActive("ahk_class CabinetWClass"){
     MsgBox, File Explorer is not active. Please open a file explorer window and navigate to a phoenix folder.
-    Reload ; Stops this script and reloads it, basically what break should do.
+    return
   }
   ; This is required to get the full path of the file from the address bar
   WinGetText, full_path, A

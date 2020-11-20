@@ -4,7 +4,7 @@
 
 ; Used in Tester Sometimes
 CreateNewCase(){
-  Crest(2350,218) ; New case button
+  ;Crest(2350,218) ; New case button
   Crest(524,558)  ; Incident date input
   Seep("{Enter}") ; Accept default datetime
   Crest(1100,800) ; Incident desc
@@ -25,6 +25,15 @@ CreateNewCase(){
   Crest(1244,494) ; Click to normalize tab distance
   Seep("{Tab 1}{Enter}", 2000) ; Select First Person
   Seep("{Tab 7}{Enter}") ; Accept Person
+}
+
+FillSsnDod(){
+  Seep("{Tab}")        ; highlight ssn input
+  Seep(FakeSSN)  ; enter user's fake ssn
+  Seep("{Tab}")        ; highlight dod number input
+  Seep(FakeNum)   ; enter fake dod number
+  Seep("{Tab 2}")      ; highlight Confirm Button
+  Seep("{Enter}")      ; Confirm and close modal
 }
 
 ; { Open a new Chrome incognito window, navigate to phoenix
@@ -259,8 +268,11 @@ ChromeStartup(){
 Tester(Screen:="Full"){
 
   ; Create New Case, stop at Cac Options
-  Crest(2353,217)
-  Crest(2100,462)
+  ;Crest(2353,217)
+  ;Crest(2100,462)
+
+  ; Create New Case, Fill Form
+  ;CreateNewCase()
 
 
   ; ===========================================
