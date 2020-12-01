@@ -1,8 +1,5 @@
 ; cmd_functions
-
-#Include C:\ahk_scripts\GlobalVariables.ahk
-#Include C:\ahk_scripts\ahk_utils\ahk_utilities.ahk
-#Include C:\ahk_scripts\ahk_utils\ahk_functions.ahk
+#Include C:\ahk_scripts\ahk_utils\Functions.ahk
 
 newCmd(){ ;{ if an explorer window is open, open a cmd prompt to that location
   if WinActive("ahk_class CabinetWClass")

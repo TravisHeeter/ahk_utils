@@ -1,7 +1,7 @@
 ; Git Bash Utilities
 ; The git bash script was too big, so I moved all the functions here
 
-#Include C:\ahk_scripts\ahk_utils\ahk_functions.ahk
+#Include C:\ahk_scripts\ahk_utils\Functions.ahk
 
 ; Global Variables
 Global CheckBranchRepo := check_branch_repo
@@ -120,15 +120,18 @@ ChangeCRNT(p:=""){
   If(p = "")
     return
 
+  MsgBox, %p%
+
   CloseAllCMDs()
-  CmndToC()
+  CmdToC()
 
   Seep("SET crnt=" . p . "{Enter}")
   Seep("SETX crnt " . p . "{Enter}")
 
   CloseAllCMDs()
   Sleep, 1000
-  Rescript()
+  Rescript("git")
+  Rescript("atom")
 
   Seep("!p")
 }

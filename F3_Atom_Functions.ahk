@@ -1,8 +1,6 @@
 ; atom functions
 
-#Include C:\ahk_scripts\GlobalVariables.ahk
-#Include C:\ahk_scripts\ahk_utils\ahk_utilities.ahk
-#Include C:\ahk_scripts\ahk_utils\ahk_functions.ahk
+#Include C:\ahk_scripts\ahk_utils\Functions.ahk
 
 commentOut(start,end:=""){
   ; Go to the line that starts commented out part

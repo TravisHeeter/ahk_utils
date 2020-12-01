@@ -1,4 +1,5 @@
-#Include C:\ahk_scripts\ahk_utils\ahk_utilities.ahk
+#Include C:\ahk_scripts\GlobalVariables.ahk
+#Include C:\ahk_scripts\ahk_utils\Utilities.ahk
 
 CloseAllCMDs(){ ;{ Close all cmd windows
   Loop
