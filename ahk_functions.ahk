@@ -10,6 +10,11 @@ CloseAllCMDs(){ ;{ Close all cmd windows
   Sleep, 1000
 }
 
+CmdToC(){
+  Run, cmd, c:\
+  Sleep, 1000
+}
+
 Crest(x, y:=0, Rest:=1000, cm:="", right:="false"){ ;{ Click + Rest = Crest. Move to (X,Y) or (x[1],x[2]) coordinates, pause 1 sec, click, rest. cm means CoordMode, and can only be Screen, Relative, Window, or Client - and it will switch back to Window at the end; right:=false - true for right-click.
   CoordMode, Mouse, Window
 

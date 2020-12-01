@@ -113,19 +113,15 @@ CloneAndCheckout(){
 
 ; Change the crnt env variable to the current file explorer path
 ChangeCRNT(p:=""){
+  ; If the new crnt value isn't sent in, get it from the active Explorer Window
   If(p = "")
     p := GetCurrentPath()
   Sleep, 2000
-  If(p = ""){
-    ErrMsg("git_bash_utils.ahk - GetCurrentPath()","An empty value was produced from GetCurrentPath during the ChangeCRNT procedure. The ChangeCRNT process will be stopped, although other sequences may still be running.")
+  If(p = "")
     return
-  }
 
   CloseAllCMDs()
-
-  ; Open new cmd to C:\
-  Send, !c
-  Sleep, 1000
+  CmndToC()
 
   Seep("SET crnt=" . p . "{Enter}")
   Seep("SETX crnt " . p . "{Enter}")
